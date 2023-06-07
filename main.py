@@ -1,4 +1,5 @@
 import load_data
 if __name__ == '__main__':
-    pass
+    load_data.load_data_func("./train.feats.csv", "./train.labels.0.csv")
+
     #itaa
