@@ -31,6 +31,7 @@ def load_data(samples_file_name: str, responses_file_name: str) :
     raw_data_x = pd.read_csv(samples_file_name)
     raw_data_y = pd.read_csv(responses_file_name)
     X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y,test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.8, random_state=42)
     return X_train, X_test, y_train, y_test
 
 def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove):
