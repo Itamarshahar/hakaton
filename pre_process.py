@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 
 
-def load_data(samples_file_name: str, responses_file_name: str):
+def load_data(samples_file_name: str, responses_file_name: str) :
     """
     Load house prices dataset and preprocess data.
     Parameters
