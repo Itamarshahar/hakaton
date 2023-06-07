@@ -25,9 +25,6 @@ def load_data(samples_file_name: str, responses_file_name: str) :
     Design matrix and response vector (prices) - either as a single
     DataFrame or a Tuple[DataFrame, Series]
     """
-
-    #ddd
-    #rrr
     # load data
     raw_data_x = pd.read_csv(samples_file_name)
     raw_data_y = pd.read_csv(responses_file_name)
@@ -47,7 +44,8 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
     names = X_train.columns
     #removes all unwanted cols
-    X_train.drop(cols_to_remove)
+    for col in cols_to_remove:
+        X_train = X_train.drop(col, axis= 1)
 
     for col in cols_to_dummies:
         convert_to_dummies(X_train, col)
@@ -67,7 +65,8 @@ def convert_to_dummies(X_train, col_to_dummies):
 
 
 
-def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove):
+def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str]):
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
-    X_train = prepreprocess(X_train, y_train, cols_to_remove, ['FormName', 'אבחנה-Basicstage'])
+    X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
+    X_train.columns
     pass
