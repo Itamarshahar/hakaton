@@ -5,9 +5,11 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
+from sklearn.model_selection import train_test_split
 
 
-def load_data(filename: str, cols_to_drop = None):
+
+def load_data(samples_file_name: str, responses_file_name: str):
     """
     Load house prices dataset and preprocess data.
     Parameters
@@ -23,8 +25,9 @@ def load_data(filename: str, cols_to_drop = None):
 
 
     # load data and drop unnecessary data
-    raw_data = pd.read_csv(filename).drop(cols_to_drop, axis=1)
+    raw_data_x = pd.read_csv(samples_file_name)
+    raw_data_y = pd.read_csv(responses_file_name)
+    X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
 
 
-    #replace zip code col to dummies
-    return pd.get_dummies(raw_data, prefix='zipcode_', columns=['zipcode'], dtype=int)
