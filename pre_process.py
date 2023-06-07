@@ -2,6 +2,7 @@
 from typing import NoReturn
 import numpy as np
 import pandas as pd
+from scipy.sparse import csr_matrix
 import plotly.graph_objects as go
 import plotly.express as px
 import plotly.io as pio
@@ -34,7 +35,7 @@ def load_data(samples_file_name: str, responses_file_name: str) :
     X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.8, random_state=42)
     return X_train, X_test, y_train, y_test
 
-def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove):
+def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: [str], cols_to_dummies: [str]):
 
 
 
@@ -45,17 +46,28 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove):
     # Fit and transform the text data
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
     names = X_train.columns
+    #removes all unwanted cols
     X_train.drop(cols_to_remove)
-    X = vectorizer.fit_transform(X_train['FormName'])
 
-    # Get the feature names (words or tokens)
-    feature_names = vectorizer.get_feature_names()
+    for col in cols_to_dummies:
+        convert_to_dummies(X_train, col)
+        X_train = X_train.drop(col, axis=1)
+    return X_train
 
-    # Convert the sparse matrix to a dense array
-    X = X.toarray()
-    pass
+
+def convert_to_dummies(X_train, col_to_dummies):
+    X_train[col_to_dummies] = X_train[col_to_dummies].str.replace(' ', '_')
+    unique_words = set()
+    for text in X_train[col_to_dummies]:
+        words = text.lower().split()
+        unique_words.update(words)
+    df = pd.DataFrame()
+    for word in unique_words:
+        X_train[word] = [int(word in text.lower().split()) for text in X_train[col_to_dummies]]
+
 
 
 def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove):
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
-    prepreprocess(X_train, y_train, cols_to_remove)
+    X_train = prepreprocess(X_train, y_train, cols_to_remove, ['FormName', 'אבחנה-Basicstage'])
+    pass
