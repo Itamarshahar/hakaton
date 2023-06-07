@@ -1,5 +1,5 @@
-import load_data
+import pre_process
 if __name__ == '__main__':
-    load_data.load_data_func("./train.feats.csv", "./train.labels.0.csv")
+    pre_process.load_data_func("./train.feats.csv", "./train.labels.0.csv")
 
     #itaa
