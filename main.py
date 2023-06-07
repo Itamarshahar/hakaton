@@ -4,5 +4,5 @@ if __name__ == '__main__':
     link1 = "./train.feats.csv"
     link2 = "./train.labels.0.csv"
     run_preprocess(link1, link2, cols_to_remove)
-
+    #
 
