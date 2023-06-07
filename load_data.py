@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 
 
-def load_data(samples_file_name: str, responses_file_name: str):
+def load_data_func(samples_file_name: str, responses_file_name: str):
     """
     Load house prices dataset and preprocess data.
     Parameters
@@ -30,8 +30,9 @@ def load_data(samples_file_name: str, responses_file_name: str):
     X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y, test_size=0.2, random_state=42)
     return X_train, X_test, y_train, y_test
 
-def preprocess(X_train: ndarray)
 
+def preprocess():
+    pass
 
 
 
