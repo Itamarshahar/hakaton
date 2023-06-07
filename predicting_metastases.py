@@ -8,3 +8,6 @@ class PredictingMetastases:
 
     def _fit(self):
         pass
+
+    def _loss(self):
+        pass
