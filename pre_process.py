@@ -62,11 +62,13 @@ def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], 
     df[col_name] = col
     return df
 def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
+    df[col_to_dummies] = df[col_to_dummies].astype(str)
     df[col_to_dummies] = df[col_to_dummies].str.replace(' ', '_')
     unique_words = set()
     for text in df[col_to_dummies]:
         words = text.lower().split(splitter)
-        unique_words.update(words)
+        if words[0] != '':
+            unique_words.update(words)
     for word in unique_words:
         df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
     return df.drop(col_to_dummies, axis= 1)
