@@ -3,7 +3,7 @@ import numpy as np
 import plotly.express as px
 import pandas as pd
 from typing import NoReturn, Optional
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from predicting_metastases import PredictingMetastases
 def draw(X, y) -> None:
     """
