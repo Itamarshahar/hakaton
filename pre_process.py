@@ -73,7 +73,8 @@ def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
         if words[0] != '':
             unique_words.update(words)
     for word in unique_words:
-        df[col_to_dummies + " " + word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
+        # df[col_to_dummies + " " + word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
+        df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
     return df.drop(col_to_dummies, axis= 1)
 
 def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:

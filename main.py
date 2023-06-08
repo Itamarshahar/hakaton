@@ -17,6 +17,7 @@ LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.l
 
 SAMPLE_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.feats.csv"
 LABEL_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.0.csv"
+LABEL1_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.1.csv"
 
 SAMPLE_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.feats.csv"
 LABEL_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.labels.0.csv"
@@ -27,10 +28,9 @@ COLS_TO_DUM = ['FormName','Basicstage', 'Hospital','Histologicaldiagnosis','N-ly
 COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3','surgerybeforeorafter-Activitydate',
                  'KI67protein', 'Surgeryname1', 'Surgeryname2', 'Surgeryname3', 'UserName']
 
-def run_tumor_size(X,y):
-    X = X.values
-    y = y.values
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
+def run_tumor_size(str1, str2, lst1, lst2):
+    hillel_X, hillel_y = run_preprocess(str1, str2, lst1, lst2, mode="tumor_size")
+    h_train_x, h_train_y, h_test_x, h_test_y = train_test_split(hillel_X, hillel_y, test_size=0.2)
     learner = predicting_tumor_size.PredictTumorSize()
     learner._fit(X_train, X_train)
     return learner._loss(X_test, y_test)
@@ -38,24 +38,15 @@ def run_tumor_size(X,y):
 def run_metastases(X,y):
     X = X.values
     y = y.values
-    # train_x, test_x,train_y, test_y = train_test_split(X, y, test_size=0.2)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
     # run_model_selection(X_train, X_test, y_train, y_test)
 
-    metastases_model = PredictingMetastases()
+    metastases_model = PredictingMetastases(96)
     metastases_model._fit(X_train, y_train)
-    loss = metastases_model._loss(X_test, y_test)
-    print(loss)
+    print(metastases_model._loss(X_test, y_test))
 
 
-def model_best_features(x, y):
-    rf_classifier = RandomForestClassifier(n_estimators=100)
-    rf_classifier.fit(x, y)
-    feature_importances = rf_classifier.feature_importances_
-    feature_names = x.columns
-    feature_importance_dict = dict(zip(feature_names, feature_importances))
-    sorted_feature_importances = sorted(feature_importance_dict.items(),
-                                        key=lambda x: x[1], reverse=True)
+
 
     feature_names_sorted = []
     feature_importances_sorted = []
@@ -81,15 +72,15 @@ if __name__ == '__main__':
     cols_to_remove = []
     #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
 
-    cols_to_remove = []
 
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv",COL_TO_REMOVE, COLS_TO_DUM)
-    X, y = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
-    model_best_features(X,y)
+    # X, y = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM, mode="meta")
+    # run_metastases(X,y)
+    # generate_best_feature(X, y)
 
+    X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
 
-    run_metastases(X,y)
-    # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    run_tumor_size(X,y)
     # for col in COLS_TO_DUM:
     #     catagorial_label_perc(X, generate_is_sick_vector(y), col)
     # draw(X, make_unique_response(y))
