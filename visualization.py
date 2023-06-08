@@ -13,6 +13,7 @@ def draw(X, y) -> None:
     for col in X.columns:
         pass
 
+def catagorial_label_perc_():
 
 
 
