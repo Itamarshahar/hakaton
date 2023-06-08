@@ -99,12 +99,27 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train = change_value(X_train,'Histopatologicaldegree',{"null":-1, "gx":0, "g1":1,"g2":2, "g3":3, "g4":4 }, default_value= 0)
     X_train = treat_IVI(X_train)
     X_train = trea_M_meta(X_train)
-    #X_train['Histopatologicaldegree'].replace("Null", -1, inplace= True)
+    X_train = treat_Margin_Type(X_train)
+    treat_Node_Exam(X_train)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
 
     return X_train_numeric_only, y_train
+
+
+def treat_Node_Exam(X_train):
+    X_train['Nodesexam'].fillna(0, inplace=True)
+    X_train['Nodesexam'] = pd.to_numeric(X_train['Nodesexam'],
+                                         errors='coerce').fillna(0).astype(int)
+
+
+def treat_Margin_Type(X_train):
+    X_train = change_value(X_train, 'MarginType', {"נקיים": -1, "נגועים": 1, "ללא": 0},
+                           default_value=0)
+    X_train['MarginType'] = pd.to_numeric(X_train['MarginType'],
+                                          errors='coerce').fillna(0).astype(int)
+    return X_train
 
 
 def trea_M_meta(X_train):
