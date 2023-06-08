@@ -12,6 +12,18 @@ def draw(X, y) -> None:
     feature_evaluation(X,y)
     for col in X.columns:
         pass
+def generate_is_sick_vector(y):
+    is_sick_vector = np.where(y.sum(axis=1) > 0, 1, 0)
+    return is_sick_vector
+def plot_corelation(X, y):
+    val_counts = {}
+    is_sick = generate_is_sick_vector(y)
+    X["is_sick"] = is_sick # Filter X based on is_sick
+    for val in X['Nodesexam'].unique():
+        count = ((X['Nodesexam'] == val) & (is_sick == 1)).sum()
+        val_counts[val] = count
+
+    print(val_counts)
 
 def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame,  cancer_site: str, orig_col : str):
     probabilities = []
