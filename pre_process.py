@@ -57,7 +57,12 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
         X_train = X_train.drop(col, axis=1)
     return X_train
 
-
+def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], default_value: any):
+    look_for_key = convert_dict.keys()
+    col = df[col_name]
+    for key in look_for_key:
+        col = col.replace({r'.*{}.'.format(key): convert_dict[key]}, regex = True)
+    df[col_name] = col
 def convert_to_dummies(X_train, col_to_dummies, splitter:str = "+"):
     X_train[col_to_dummies] = X_train[col_to_dummies].str.replace(' ', '_')
     unique_words = set()
