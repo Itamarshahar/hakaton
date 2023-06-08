@@ -11,12 +11,12 @@ LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.l
 SAMPLE_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.feats.csv"
 LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.labels.0.csv"
 
-COLS_TO_DUM = ['FormName','Basicstage', 'Hospital',
+COLS_TO_DUM = ['FormName','Basicstage',
                'UserName','Histologicaldiagnosis','N-lymphnodesmark(TNM)',
             'Surgeryname1', 'Surgeryname2', 'Surgeryname3', 'T-Tumormark(TNM)', 'surgerybeforeorafter-Actualactivity']
 
 COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3','surgerybeforeorafter-Activitydate',
-                 'KI67protein']
+                 'KI67protein','Hospital', 'UserName',"Side"]
 
 def tumor_size(str1, str2, lst1, lst2):
     hillel_X, hillel_y = run_preprocess(str1, str2, lst1, lst2, mode="tumor_size")
@@ -52,4 +52,4 @@ if __name__ == '__main__':
     # for col in COLS_TO_DUM:
     #     catagorial_label_perc(X, generate_is_sick_vector(y), col)
     # draw(X, make_unique_response(y))
-
+    pass

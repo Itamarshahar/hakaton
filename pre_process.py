@@ -102,9 +102,9 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train = treat_Margin_Type(X_train)
     treat_Node_Exam(X_train)
     treat_pos_nodes(X_train)
-    X_train['Side'] = np.where(X_train['Side'] == "דו צדדי", "ימין+שמאל", X_train['Side'])
+    #X_train['Side'] = np.where(X_train['Side'] == "דו צדדי", "ימין+שמאל", X_train['Side'])
     # X_train.fillna()
-    X_train = convert_to_dummies(X_train,'Side')
+    #X_train = convert_to_dummies(X_train,'Side')
     X_train = treat_stage(X_train)
 
     X_train = change_value(X_train, 'pr', {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1, "%":1},
