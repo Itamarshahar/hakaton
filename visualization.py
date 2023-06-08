@@ -1,51 +1,33 @@
-from pre_process import prepreprocess, run_preprocess, convert_to_dummies
+from pre_process import prepreprocess, run_preprocess
 import numpy as np
 import plotly.express as px
 import pandas as pd
 from typing import NoReturn, Optional
-import matplotlib.pyplot as plt
-
-import matplotlib
 def draw(X, y) -> None:
     """
 
     """
-    plot_corelation(X,y)
     # print(X)
     # print(y)
-    # # feature_evaluation(X,y)
-    #
-    # unique_labels = y[y.columns[0]].unique()
-    # for feature in X.columns:
-    #     unique_feature = X[feature].unique()
-    #     d = {str(num): sum(y[y.columns[0]==num]) for num in unique_feature}
-    #     df = pd.DataFrame(d, index=unique_labels)
-    #     ax = df.plot.bar(rot=0)
-    #     ax.tick_params(axis='x', rotation=90, labelsize=5)
-    #     ax.set_title(feature)  # Set feature name as the title
-    #     plt.show()
-"""
->>> speed = [0.1, 17.5, 40, 48, 52, 69, 88]
->>> lifespan = [2, 8, 70, 1.5, 25, 12, 28]
->>> index = ['snail', 'pig', 'elephant',
-...          'rabbit', 'giraffe', 'coyote', 'horse']
->>> df = pd.DataFrame({'speed': speed,
-...                    'lifespan': lifespan}, index=index)
->>> ax = df.plot.bar(rot=0)"""
+    feature_evaluation(X,y)
+    for col in X.columns:
+        pass
 
-def generate_is_sick_vector(y):
-    is_sick_vector = np.where(y.sum(axis=1) > 0, 1, 0)
-    return is_sick_vector
-def plot_corelation(X, y):
-    val_counts = {}
-    is_sick = generate_is_sick_vector(y)
-    X["is_sick"] = is_sick # Filter X based on is_sick
-    for val in X['Nodesexam'].unique():
-        count = ((X['Nodesexam'] == val) & (is_sick == 1)).sum()
-        val_counts[val] = count
+def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame,  cancer_site: str, orig_col : str):
+    probabilities = []
 
-    print(val_counts)
+    column_names = data.columns
+    stage_columns = [col for col in column_names if orig_col in col.lower()]
 
+    data = data.append(response)
+
+    for column in column_names:
+        filtered_data = data[data[column] == 1]  # Filter dataframe to include only rows where the value is 1
+        probability = filtered_data[filtered_data[cancer_site] == 1].count() / filtered_data.shape[0] # Calculate the probability
+        probabilities.append(probability)
+    fig = px.bar(x=stage_columns, y=probabilities, labels={'x': 'Columns', 'y': 'Probability of 1'})
+    fig.update_layout(title='Probability of Having a Value of 1 in Each Column')
+    fig.show()
 
 def feature_evaluation(X: pd.DataFrame, y: pd.Series,
                     output_path: str = ".") -> NoReturn:

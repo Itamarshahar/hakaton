@@ -70,7 +70,7 @@ def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
         if words[0] != '':
             unique_words.update(words)
     for word in unique_words:
-        df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
+        df[col_to_dummies + " " + word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
     return df.drop(col_to_dummies, axis= 1)
 
 def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
@@ -89,11 +89,12 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
     if mode == 'meta':
-        y = make_unique_response(y_train)
+        y_train = make_unique_response(y_train)
     er_dict = {'pos':99999}
     df = change_value(X_train, 'er', er_dict, 555555)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
+
     return X_train_numeric_only, y_train
 
