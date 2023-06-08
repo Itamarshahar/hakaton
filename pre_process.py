@@ -66,7 +66,7 @@ def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
     unique_words = set()
     for text in df[col_to_dummies]:
         words = text.lower().split(splitter)
-        if words[0] is not '':
+        if words[0] != '':
             unique_words.update(words)
     for word in unique_words:
         df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
