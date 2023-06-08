@@ -1,4 +1,5 @@
 import pandas as pd
+import sklearn
 from sklearn.model_selection import train_test_split
 import numpy as np
 from pre_process import run_preprocess, make_unique_response, run_preocces_only_X
@@ -34,7 +35,7 @@ COL_TO_REMOVE = ['UserName', 'Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Su
 
 def run_tumor_size(X,y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    learner = PredictTumorSize()
+    learner = predicting_tumor_size.PredictTumorSize()
     learner._fit(X_train, y_train)
     predictions = learner._predict(X_test)
     df_predictions = pd.DataFrame(predictions, columns=['אבחנה-Tumor size'])
@@ -42,14 +43,14 @@ def run_tumor_size(X,y):
     # print(tmp)
     return learner._loss(X_test, y_test)
 
-def run_metastases(X,y):
-    X = X.values
-    y = y.values
+def run_metastases(X,y, le: sklearn.preprocessing.LabelEncoder):
+    # X = X.values
+    # y = y.values
     # train_x, test_x,train_y, test_y = train_test_split(X, y, test_size=0.2)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
     # run_model_selection(X_train, X_test, y_train, y_test)
 
-    metastases_model = PredictingMetastases()
+    metastases_model = PredictingMetastases(le)
     metastases_model._fit(X_train, y_train)
     loss = metastases_model._loss(X_test, y_test)
     print(loss)
@@ -115,19 +116,23 @@ def submit_tumor():
 
 
 if __name__ == '__main__':
-    generate_submition_file()
+    # generate_submition_file()
     #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
 
-
+    cols_to_remove = []
+    le = sklearn.preprocessing.LabelEncoder()
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv",COL_TO_REMOVE, COLS_TO_DUM)
     # X, y1 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # X, y2 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM,"meta")
     #
-    # run_metastases(X,y)
+    # run_metastases(X,y2, le)
     # respon=get_column_names_with_ones(run_metastases(X,y2), y2.columns)
     # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # respon.to_excel('./output.xlsx', index=False)
 
+    X, y = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM,"meta", le)
+    res = run_metastases(X, y, le)
+    res = pd.Series(le.inverse_transform(res))
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.1.csv",COL_TO_REMOVE, COLS_TO_DUM)
     # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
     # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
