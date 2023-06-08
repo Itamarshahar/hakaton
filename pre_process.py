@@ -42,9 +42,11 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
 
     # Fit and transform the text data
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
+    X_train.rename(columns=lambda x: x.replace("אבחנה-", ''), inplace=True)
     names = X_train.columns
     #need to convert nans
-    X_train['אבחנה-Surgeryname1'].fillna("NA", inplace= True)
+    X_train['Surgeryname1'].fillna("NA", inplace= True)
+
     #removes all unwanted cols
     for col in cols_to_remove:
         X_train = X_train.drop(col, axis= 1)
@@ -59,7 +61,7 @@ def convert_to_dummies(X_train, col_to_dummies):
     X_train[col_to_dummies] = X_train[col_to_dummies].str.replace(' ', '_')
     unique_words = set()
     for text in X_train[col_to_dummies]:
-        words = text.lower().split()
+        words = text.lower().split("+")
         unique_words.update(words)
     df = pd.DataFrame()
     for word in unique_words:
