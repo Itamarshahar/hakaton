@@ -13,6 +13,7 @@ class PredictTumorSize(BaseEstimator):
         # self.base_line_ridge = linear_model.Ridge(alpha=base_line_ridge_lambda)
         self.base_line_linear = linear_model.LinearRegression()
         # self.base_logistic = linear_model.LogisticRegression()
+
         self.is_fit = False
 
     def _fit(self, X, y):

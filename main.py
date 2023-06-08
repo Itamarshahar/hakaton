@@ -19,10 +19,10 @@ LABEL_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.l
 
 COLS_TO_DUM = ['FormName','Basicstage', 'Hospital',
                'UserName','Histologicaldiagnosis','N-lymphnodesmark(TNM)',
-            'Surgeryname1', 'Surgeryname2', 'Surgeryname3', 'T-Tumormark(TNM)', 'surgerybeforeorafter-Actualactivity']
+             'surgerybeforeorafter-Actualactivity']
 
 COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3','surgerybeforeorafter-Activitydate',
-                 'KI67protein']
+                 'KI67protein','Surgeryname1', 'Surgeryname2', 'Surgeryname3']
 
 def run_tumor_size(str1, str2, lst1, lst2):
     hillel_X, hillel_y = run_preprocess(str1, str2, lst1, lst2, mode="tumor_size")
