@@ -155,7 +155,7 @@ def treat_Margin_Type(X_train):
 
 
 def trea_M_meta(X_train):
-    X_train = change_value(X_train, 'M-metastasesmark(TNM)', {"m0": 1, "m1a": 3, "m1b": 4, "m1": 2, "mx": 5},
+    X_train = change_value(X_train, 'M-metastasesmark(TNM)', {"m0": 0, "m1a": 1, "m1b": 1, "m1": 1, "mx": 1},
                            default_value=0)
     X_train['M-metastasesmark(TNM)'] = pd.to_numeric(X_train['M-metastasesmark(TNM)'],
                                                      errors='coerce').fillna(0).astype(int)
