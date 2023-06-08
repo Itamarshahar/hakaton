@@ -1,3 +1,6 @@
+import csv
+import pandas as pd
+
 from sklearn.model_selection import train_test_split
 import numpy as np
 from pre_process import run_preprocess, make_unique_response
@@ -27,11 +30,11 @@ COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3',
                  'KI67protein']
 
 def run_tumor_size(X,y):
-    X = X.values
-    y = y.values
+    # X = X.values
+    # y = y.values
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
     learner = predicting_tumor_size.PredictTumorSize()
-    learner._fit(X_train, X_train)
+    learner._fit(X_train, y_train)
     return learner._loss(X_test, y_test)
 
 def run_metastases(X,y):
@@ -85,7 +88,11 @@ if __name__ == '__main__':
     # run_metastases(X,y)
     # generate_best_feature(X, y)
 
-    X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
+    # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
+    X = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
+    y = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
 
     run_tumor_size(X,y)
     # for col in COLS_TO_DUM:
