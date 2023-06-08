@@ -8,6 +8,8 @@ from predicting_metastases import PredictingMetastases
 import numpy as np
 import post_process
 import scipy.stats as stats
+
+from predicting_tumor_size import PredictTumorSize
 SAMPLE_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
 LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
 
@@ -32,10 +34,12 @@ COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3',
 
 def run_tumor_size(X,y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    learner = predicting_tumor_size.PredictTumorSize()
+    learner = PredictTumorSize()
     learner._fit(X_train, y_train)
-    print(learner._predict(X_train))
-
+    predictions = learner._predict(X_test)
+    df_predictions = pd.DataFrame(predictions, columns=['אבחנה-Tumor size'])
+    df_predictions.to_csv("part2/predictions.csv", index=False)
+    # print(tmp)
     return learner._loss(X_test, y_test)
 
 def run_metastases(X,y):
@@ -81,11 +85,11 @@ if __name__ == '__main__':
     # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # respon.to_excel('./output.xlsx', index=False)
 
-    # X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
     # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
-    X = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
-    y = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
+    # X = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
+    # y = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
 
     run_tumor_size(X, y)
     # for col in COLS_TO_DUM:

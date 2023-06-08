@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestRegressor
 class PredictTumorSize(BaseEstimator):
     def __init__(self):
         super().__init__()
-        self.model = RandomForestRegressor()
+        self.model = RandomForestRegressor(n_estimators=100)
         self.is_fit = False
 
     def _fit(self, X, y):
@@ -24,5 +24,5 @@ class PredictTumorSize(BaseEstimator):
     def _loss(self, X, true_y):
         y_pred = self._predict(X)
         print("mean_sq_err:", mean_squared_error(y_true=true_y, y_pred=y_pred))
-        print(np.sum(y_pred*true_y))
-        return mean_squared_error(y_true=true_y, y_pred=y_pred)
+        # print(np.sum(y_pred*true_y))
+        return mean_squared_error(y_true=true_y, y_pred=y_pred*0)
