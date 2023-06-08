@@ -31,7 +31,7 @@ def load_data(samples_file_name: str, responses_file_name: str) :
     X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y,test_size=0.2, random_state=42)
     return X_train, X_test, y_train, y_test
 
-def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: [str], cols_to_dummies: [str]):
+def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame , cols_to_remove: [str], cols_to_dummies: [str]):
 
     # Initialize CountVectorizer
     vectorizer = CountVectorizer()
@@ -39,7 +39,8 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
     # Fit and transform the text data
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
     X_train.rename(columns=lambda x: x.replace("אבחנה-", ''), inplace=True)
-    y_train.rename(columns=lambda x: x.replace("אבחנה-", ''), inplace=True)
+    if y_train is not None:
+        y_train.rename(columns=lambda x: x.replace("אבחנה-", ''), inplace=True)
     names = X_train.columns
     #need to convert nans
     X_train['Surgeryname1'].fillna("NA", inplace= True)
@@ -86,6 +87,59 @@ def clean_responses(response:str):
     response = str(response)
     matches = re.findall(r"'(.*?)'", response)
     return ','.join(matches)
+
+
+
+def run_preocces_only_X(X, y, cols_to_remove:[str], cols_to_dummies:[str], mode: str=None):
+    """
+      return matrix of only numbers
+      """
+    X_train = prepreprocess(X, y, cols_to_remove, cols_to_dummies)
+    if mode == 'meta':
+        y_train = make_unique_response(y)
+    for col in convert_to_mean:
+        X_train[col].fillna(X_train[col].mean())
+    X_train = change_value(X_train, 'Histopatologicaldegree',
+                           {"null": -1, "gx": 0, "g1": 1, "g2": 2, "g3": 3,
+                            "g4": 4}, default_value=0)
+    X_train = treat_IVI(X_train)
+    X_train = trea_M_meta(X_train)
+    X_train = treat_Margin_Type(X_train)
+    treat_Node_Exam(X_train)
+    treat_pos_nodes(X_train)
+    X_train = treat_stage(X_train)
+
+    X_train = change_value(X_train, 'pr',
+                           {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1,
+                            "%": 1},
+                           default_value=0)
+    X_train['pr'].fillna(0, inplace=True)
+    X_train['pr'] = pd.to_numeric(X_train['pr'],
+                                  errors='coerce').fillna(0).astype(float)
+    X_train = change_value(X_train, 'pr',
+                           {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1,
+                            "%": 1},
+                           default_value=0)
+    X_train['er'].fillna(0, inplace=True)
+    X_train['er'] = pd.to_numeric(X_train['er'],
+                                  errors='coerce').fillna(0).astype(float)
+
+    X_train['T-Tumormark4'] = np.where(
+        X_train['T-Tumormark(TNM)'].str.contains('T4'),
+        X_train['T-Tumormark(TNM)'], 0)
+    X_train['T-Tumormark4'].fillna(0)
+    X_train = change_value(X_train, 'T-Tumormark(TNM)',
+                           {"Tx": 0, "T0": 0, "T1": 1, "T2": 2, "T3": 3,
+                            "T4": 4})
+    X_train = convert_to_dummies(X_train, 'T-Tumormark4')
+
+    non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
+    X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
+    X_train_numeric_only.fillna(0, inplace=True)
+
+    return X_train_numeric_only
+
+
 def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str], mode: str=None):
     """
     return matrix of only numbers
