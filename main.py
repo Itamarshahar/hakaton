@@ -9,6 +9,12 @@ LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.l
 SAMPLE_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.feats.csv"
 LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.labels.0.csv"
 
+COLS_TO_DUM = ['FormName','Basicstage', 'Hospital',
+               'UserName','Histologicaldiagnosis', 'Histopatologicaldegree','N-lymphnodesmark(TNM)','Stage',
+            'Surgeryname1', 'Surgeryname2', 'Surgeryname3', 'T-Tumormark(TNM)', 'surgerybeforeorafter-Actualactivity']
+
+COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3','surgerybeforeorafter-Activitydate']
+
 def testing_tumor_size(str1, str2, lst1, lst2):
     hillel_X, hillel_y = run_preprocess(str1, str2, lst1, lst2, mode="tumor_size")
     h_train_x, h_train_y, h_test_x, h_test_y = train_test_split(hillel_X, hillel_y, test_size=0.2)
@@ -21,8 +27,7 @@ if __name__ == '__main__':
     cols_to_remove = []
     #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
     cols_to_remove = []
-    run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage', 'Hospital'])
-    X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage'])
-    print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage']))
+    X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM)
+    print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM))
     draw(X, make_unique_response(y))
 
