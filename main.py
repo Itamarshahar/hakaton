@@ -34,7 +34,7 @@ def run_tumor_size(X,y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     learner = predicting_tumor_size.PredictTumorSize()
     learner._fit(X_train, y_train)
-    learner._predict(X_train)
+    print(learner._predict(X_train))
 
     return learner._loss(X_test, y_test)
 
