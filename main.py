@@ -1,4 +1,3 @@
-import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
 from pre_process import run_preprocess, make_unique_response
@@ -42,29 +41,23 @@ def run_metastases(X,y):
     metastases_model._fit(X_train, y_train)
     loss = metastases_model._loss(X_test, y_test)
     print(loss)
-    return y
 
 
 
-
-def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
-    result = []
-    for row in range(y.shape[0]):
-        row_res = []
-        for col in range(y.shape[1]):
-            if y[row][col] == 1:
-                row_res.append(col_names[col])
-        result.append(row_res)
-    return pd.DataFrame(result)
 
 if __name__ == '__main__':
     np.random.seed(0)
-    X, y = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60, COL_TO_REMOVE, COLS_TO_DUM)
 
-    # Concatenate X and y along the column axis
+    cols_to_remove = []
+    #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
 
-    result = get_column_names_with_ones(run_metastases(X, y), y.columns)
-    # Compute the correlation matrix
-    # Print the correlation matrix
-    pass
+    cols_to_remove = []
+
+    # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv",COL_TO_REMOVE, COLS_TO_DUM)
+    X, y = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # run_metastases(X,y)
+    run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # for col in COLS_TO_DUM:
+    #     catagorial_label_perc(X, generate_is_sick_vector(y), col)
+    # draw(X, make_unique_response(y))
 
