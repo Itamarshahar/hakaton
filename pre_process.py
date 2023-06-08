@@ -62,11 +62,13 @@ def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], 
     df[col_name] = col
     return df
 def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
+    df[col_to_dummies] = df[col_to_dummies].astype(str)
     df[col_to_dummies] = df[col_to_dummies].str.replace(' ', '_')
     unique_words = set()
     for text in df[col_to_dummies]:
         words = text.lower().split(splitter)
-        unique_words.update(words)
+        if words[0] != '':
+            unique_words.update(words)
     for word in unique_words:
         df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
     return df.drop(col_to_dummies, axis= 1)
@@ -80,13 +82,14 @@ def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
 def clean_responses(response:str):
     matches = re.findall(r"'(.*?)'", response)
     return ','.join(matches)
-def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str]):
+def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str], mode: str='meta'):
     """
     return matrix of only numbers
     """
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
-    y = make_unique_response(y_train)
+    if mode == 'meta':
+        y = make_unique_response(y_train)
     er_dict = {'pos':99999}
     df = change_value(X_train, 'er', er_dict, 555555)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns

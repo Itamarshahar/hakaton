@@ -2,11 +2,12 @@ import sklearn.linear_model
 from sklearn.base import BaseEstimator
 from sklearn import linear_model
 
-base_line_ridge_lambda = 0.5  ## todo: GLOBAL!!!!
+base_line_ridge_lambda = 0.001  ## todo: GLOBAL!!!!
 
 
-class PredictTumorSize():
-    def __int__(self):
+class PredictTumorSize(BaseEstimator):
+    def __init__(self):
+        super().__init__()
         self.base_line_ridge = linear_model.Ridge(alpha=base_line_ridge_lambda)
         self.base_line_linear = linear_model.LinearRegression()
         self.is_fit = False
@@ -21,7 +22,7 @@ class PredictTumorSize():
             print("MUST FIT FIRST!")
         ridge = self.base_line_ridge.predict(X)
         linear = self.base_line_linear.predict(X)
-        return linear
+        return ridge
 
     def _loss(self, X, true_y):
         prediction = self._predict(X)
