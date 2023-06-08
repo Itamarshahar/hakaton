@@ -81,7 +81,6 @@ def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
     responses = responses.applymap(clean_responses)
     return convert_to_dummies(responses, col_name, splitter=",")
 
-
 def clean_responses(response:str):
     response = str(response)
     matches = re.findall(r"'(.*?)'", response)
@@ -140,7 +139,6 @@ def treat_pos_nodes(X_train):
     X_train['Positivenodes'].fillna(0, inplace=True)
     X_train['Positivenodes'] = pd.to_numeric(X_train['Positivenodes'],
                                              errors='coerce').fillna(0).astype(float)
-
 
 def treat_Node_Exam(X_train):
     X_train['Nodesexam'].fillna(0, inplace=True)
