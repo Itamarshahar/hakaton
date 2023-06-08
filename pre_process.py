@@ -80,13 +80,14 @@ def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
 def clean_responses(response:str):
     matches = re.findall(r"'(.*?)'", response)
     return ','.join(matches)
-def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str]):
+def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str], mode: str='meta'):
     """
     return matrix of only numbers
     """
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
-    y = make_unique_response(y_train)
+    if mode == 'meta':
+        y = make_unique_response(y_train)
     er_dict = {'pos':99999}
     df = change_value(X_train, 'er', er_dict, 555555)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
