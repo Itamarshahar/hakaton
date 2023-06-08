@@ -34,21 +34,30 @@ def plot_corelation(X, y, val):
     plt.show()
 
 
-def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame,  cancer_site: str, orig_col : str):
-    probabilities = []
+def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame, orig_col: str, cancer_site: str = "sick", percentage : bool = True):
+    res = []
 
     column_names = data.columns
-    stage_columns = [col for col in column_names if orig_col in col.lower()]
+    stage_columns = [col for col in column_names if orig_col in col and data[data[col] == 1].count().any()]
+    tag = "percentage"
+    for column in stage_columns:
+        filtered_data = pd.concat((pd.DataFrame(data[column]), response), axis=1)
+        filtered_data = filtered_data[filtered_data[column] == 1]
 
-    data = data.append(response)
+        if filtered_data.shape[0] != 0:
+            if percentage:
 
-    for column in column_names:
-        filtered_data = data[data[column] == 1]  # Filter dataframe to include only rows where the value is 1
-        probability = filtered_data[filtered_data[cancer_site] == 1].count() / filtered_data.shape[0] # Calculate the probability
-        probabilities.append(probability)
-    fig = px.bar(x=stage_columns, y=probabilities, labels={'x': 'Columns', 'y': 'Probability of 1'})
-    fig.update_layout(title='Probability of Having a Value of 1 in Each Column')
-    fig.show()
+                probability = filtered_data[filtered_data[cancer_site] == 1].shape[0] / filtered_data.shape[0]
+                res.append(probability)
+            else:
+                tag = "sum"
+                sum = filtered_data[filtered_data[cancer_site] == 1].shape[0]
+                res.append(sum)
+
+    df = pd.DataFrame({'Columns': stage_columns, f'{tag} of {cancer_site}': res})
+    fig = px.bar(df, x='Columns', y=f'{tag} of {cancer_site}', labels={'Columns': 'Columns', 'Probability of 1': 'Probability of 1'})
+    fig.update_layout(title=f'{tag} of {cancer_site} in different {orig_col}')
+    fig.write_image(f"./catagorial_feature_sick_probability/percentage_as_{orig_col}_at_{tag}.png")
 
 def model_selection(X,y):
     k_range = list(range(1, 40, 2))
