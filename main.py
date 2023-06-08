@@ -30,6 +30,6 @@ if __name__ == '__main__':
     X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM)
     #print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM))
     for col in COLS_TO_DUM:
-        catagorial_label_perc(X, generate_is_sick_vector(y), col)
+        catagorial_label_perc(X, generate_is_sick_vector(y), col, percentage= False)
     draw(X, make_unique_response(y))
 

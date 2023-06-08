@@ -26,24 +26,30 @@ def plot_corelation(X, y):
 
     print(val_counts)
 
-def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame, orig_col: str, cancer_site: str = "sick"):
-    probabilities = []
+def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame, orig_col: str, cancer_site: str = "sick", percentage : bool = True):
+    res = []
 
     column_names = data.columns
     stage_columns = [col for col in column_names if orig_col in col and data[data[col] == 1].count().any()]
-
+    tag = "percentage"
     for column in stage_columns:
         filtered_data = pd.concat((pd.DataFrame(data[column]), response), axis=1)
         filtered_data = filtered_data[filtered_data[column] == 1]
 
         if filtered_data.shape[0] != 0:
-            probability = filtered_data[filtered_data[cancer_site] == 1].shape[0] / filtered_data.shape[0]
-            probabilities.append(probability)
+            if percentage:
 
-    df = pd.DataFrame({'Columns': stage_columns, 'Probability of 1': probabilities})
-    fig = px.bar(df, x='Columns', y='Probability of 1', labels={'Columns': 'Columns', 'Probability of 1': 'Probability of 1'})
-    fig.update_layout(title='Probability of Having a Value of 1 in Each Column')
-    fig.write_image(f"./catagorial_feature_sick_probability/percentage_as_{orig_col}.png")
+                probability = filtered_data[filtered_data[cancer_site] == 1].shape[0] / filtered_data.shape[0]
+                res.append(probability)
+            else:
+                tag = "sum"
+                sum = filtered_data[filtered_data[cancer_site] == 1].shape[0]
+                res.append(sum)
+
+    df = pd.DataFrame({'Columns': stage_columns, f'{tag} of {cancer_site}': res})
+    fig = px.bar(df, x='Columns', y=f'{tag} of {cancer_site}', labels={'Columns': 'Columns', 'Probability of 1': 'Probability of 1'})
+    fig.update_layout(title=f'{tag} of {cancer_site} in different {orig_col}')
+    fig.write_image(f"./catagorial_feature_sick_probability/percentage_as_{orig_col}_at_{tag}.png")
 
 def feature_evaluation(X: pd.DataFrame, y: pd.Series,
                     output_path: str = ".") -> NoReturn:
