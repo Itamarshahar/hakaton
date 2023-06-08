@@ -99,3 +99,4 @@ def run_pca_visualisation(X,Y):
 
     plt.subplots_adjust(0.04, 0.02, 0.97, 0.94, 0.09, 0.2)
     plt.show()
+
