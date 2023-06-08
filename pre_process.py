@@ -28,8 +28,9 @@ def load_data(samples_file_name: str, responses_file_name: str) :
     # load data
     raw_data_x = pd.read_csv(samples_file_name)
     raw_data_y = pd.read_csv(responses_file_name)
-    X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y,test_size=0.2, random_state=42)
-    X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.8, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y, test_size=0.2, random_state=42)
+    # X_train, X_test, y_train, y_test = train_test_split(raw_data_x, raw_data_y, test_size=0.2, shuffle=False)
+    # X_train, X_test, y_train, y_test = train_test_split(X_train, y_train, test_size=0.8, random_state=42)
     return X_train, X_test, y_train, y_test
 
 def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: [str], cols_to_dummies: [str]):
@@ -89,9 +90,9 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
     if mode == 'meta':
-        y = make_unique_response(y_train)
-    er_dict = {'pos':99999}
-    df = change_value(X_train, 'er', er_dict, 555555)
+        y_train = make_unique_response(y_train)
+    # er_dict = {'pos':99999}
+    # df = change_value(X_train, 'er', er_dict, 555555)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
