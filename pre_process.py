@@ -34,8 +34,6 @@ def load_data(samples_file_name: str, responses_file_name: str) :
 
 def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: [str], cols_to_dummies: [str]):
 
-
-
     # Initialize CountVectorizer
     vectorizer = CountVectorizer()
 
