@@ -56,7 +56,7 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
 def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], default_value: any= 0):
     look_for_key = convert_dict.keys()
     look_for_value = convert_dict.values()
-    col = df.applymap(lambda x:str(x).lower())[col_name]
+    col = df.applymap(lambda x:x.lower() if isinstance(x, str) else x)[col_name]
     #col.fillna(default_value)
     #col = col.replace({val: convert_dict.get(val, default_value) for val in col.unique()})
     for key in look_for_key:
