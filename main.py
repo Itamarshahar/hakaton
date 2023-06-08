@@ -85,7 +85,7 @@ if __name__ == '__main__':
     # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # respon.to_excel('./output.xlsx', index=False)
 
-    X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.1.csv",COL_TO_REMOVE, COLS_TO_DUM)
     # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
     # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
     # X = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
