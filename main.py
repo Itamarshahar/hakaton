@@ -1,7 +1,7 @@
 from pre_process import run_preprocess
 
 SAMPLE_PATH = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
-LABEL_PATH = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
+LABEL_PATH = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
 
 if __name__ == '__main__':
     cols_to_remove = []
