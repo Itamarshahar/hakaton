@@ -3,7 +3,7 @@ from sklearn.base import BaseEstimator
 from sklearn import linear_model
 import numpy as np
 from sklearn.metrics import f1_score
-
+from sklearn.metrics import mean_squared_error
 base_line_ridge_lambda = 0.5  ## todo: GLOBAL!!!!
 
 
@@ -31,10 +31,4 @@ class PredictTumorSize(BaseEstimator):
 
     def _loss(self, X, true_y):
         y_pred = self._predict(X)
-        print("1 in y_pred:", np.sum(y_pred))
-        print("1 in y_true:", np.sum(true_y))
-        print("2:", np.sum(y_pred * true_y))
-        return f1_score(true_y, y_pred, average="micro",
-                        zero_division=1), f1_score(true_y, y_pred,
-                                                   average="macro",
-                                                   zero_division=1)
+        return mean_squared_error(y_true=true_y, y_pred=y_pred)

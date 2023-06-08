@@ -85,7 +85,7 @@ def clean_responses(response:str):
     response = str(response)
     matches = re.findall(r"'(.*?)'", response)
     return ','.join(matches)
-def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str], mode: str='meta'):
+def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str], mode: str=None):
     """
     return matrix of only numbers
     """
