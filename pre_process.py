@@ -101,6 +101,23 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train = trea_M_meta(X_train)
     X_train = treat_Margin_Type(X_train)
     treat_Node_Exam(X_train)
+    treat_pos_nodes(X_train)
+    X_train['Side'] = np.where(X_train['Side'] == "דו צדדי", "ימין+שמאל", X_train['Side'])
+    # X_train.fillna()
+    X_train = convert_to_dummies(X_train,'Side')
+    X_train = treat_stage(X_train)
+
+    X_train = change_value(X_train, 'pr', {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1, "%":1},
+                           default_value=0)
+    X_train['pr'].fillna(0, inplace=True)
+    X_train['pr'] = pd.to_numeric(X_train['pr'],
+                                             errors='coerce').fillna(0).astype(float)
+    X_train = change_value(X_train, 'pr', {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1, "%": 1},
+                           default_value=0)
+    X_train['er'].fillna(0, inplace=True)
+    X_train['er'] = pd.to_numeric(X_train['er'],
+                                  errors='coerce').fillna(0).astype(float)
+
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
@@ -108,10 +125,27 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     return X_train_numeric_only, y_train
 
 
+def treat_stage(X_train):
+    X_train = change_value(X_train, 'Stage',
+                           {"stage0a": 1, "stage0is": 2, "stage0b": 2, "stage1b": 4, "stage1c": 5, "stage1": 3,
+                            "stage2b": 7, "stage2c": 8, "stage2": 6, "stage3b": 10, "stage3c": 11, "stage3": 9,
+                            "stage4": 12})
+    X_train['Stage'].fillna(0, inplace=True)
+    X_train['Stage'] = pd.to_numeric(X_train['Stage'],
+                                     errors='coerce').fillna(0).astype(float)
+    return X_train
+
+
+def treat_pos_nodes(X_train):
+    X_train['Positivenodes'].fillna(0, inplace=True)
+    X_train['Positivenodes'] = pd.to_numeric(X_train['Positivenodes'],
+                                             errors='coerce').fillna(0).astype(float)
+
+
 def treat_Node_Exam(X_train):
     X_train['Nodesexam'].fillna(0, inplace=True)
     X_train['Nodesexam'] = pd.to_numeric(X_train['Nodesexam'],
-                                         errors='coerce').fillna(0).astype(int)
+                                         errors='coerce').fillna(0).astype(float)
 
 
 def treat_Margin_Type(X_train):
