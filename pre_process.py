@@ -43,6 +43,8 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
     # Fit and transform the text data
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
     names = X_train.columns
+    #need to convert nans
+    X_train['אבחנה-Surgeryname1'].fillna("NA", inplace= True)
     #removes all unwanted cols
     for col in cols_to_remove:
         X_train = X_train.drop(col, axis= 1)
