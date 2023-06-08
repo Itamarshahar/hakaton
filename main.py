@@ -42,6 +42,7 @@ def run_metastases(X,y):
     metastases_model._fit(X_train, y_train)
     loss = metastases_model._loss(X_test, y_test)
     print(loss)
+    return y
 
 def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
     result = []
@@ -65,9 +66,13 @@ if __name__ == '__main__':
     cols_to_remove = []
 
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv",COL_TO_REMOVE, COLS_TO_DUM)
-    X, y = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    X, y1 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    X, y2 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM,"meta")
+
     # run_metastases(X,y)
+    respon=get_column_names_with_ones(run_metastases(X,y2), y2.columns)
     run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    respon.to_excel('./output.xlsx', index=False)
     # for col in COLS_TO_DUM:
     #     catagorial_label_perc(X, generate_is_sick_vector(y), col)
     # draw(X, make_unique_response(y))
