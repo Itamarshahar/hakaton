@@ -1,3 +1,4 @@
+import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
 from pre_process import run_preprocess, make_unique_response
@@ -41,6 +42,16 @@ def run_metastases(X,y):
     metastases_model._fit(X_train, y_train)
     loss = metastases_model._loss(X_test, y_test)
     print(loss)
+
+def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
+    result = []
+    for row in range(y.shape[0]):
+        row_res = []
+        for col in range(y.shape[1]):
+            if y[row][col] == 1:
+                row_res.append(col_names[col])
+        result.append(row_res)
+    return pd.DataFrame(result)
 
 
 
