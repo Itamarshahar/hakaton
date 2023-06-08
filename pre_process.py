@@ -50,7 +50,7 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
         X_train = X_train.drop(col, axis= 1)
 
     for col in cols_to_dummies:
-        convert_to_dummies(X_train, col)
+        X_train = convert_to_dummies(X_train, col)
 
     return X_train
 
@@ -61,16 +61,15 @@ def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], 
         col = col.replace({r'{}'.format(key)}, convert_dict[key] ,regex = True)
     df[col_name] = col
     return df
-def convert_to_dummies(X_train, col_to_dummies, splitter:str = "+"):
-    X_train[col_to_dummies] = X_train[col_to_dummies].str.replace(' ', '_')
+def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
+    df[col_to_dummies] = df[col_to_dummies].str.replace(' ', '_')
     unique_words = set()
-    for text in X_train[col_to_dummies]:
+    for text in df[col_to_dummies]:
         words = text.lower().split(splitter)
         unique_words.update(words)
-    df = pd.DataFrame()
     for word in unique_words:
-        X_train[word] = [int(word in text.lower().split()) for text in X_train[col_to_dummies]]
-    return X_train.drop(col_to_dummies, axis= 1)
+        df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
+    return df.drop(col_to_dummies, axis= 1)
 
 def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
     col_name = responses.columns[0]
@@ -78,8 +77,8 @@ def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
     return convert_to_dummies(responses, col_name, splitter=",")
 
 
-def clean_responses(reponse:str):
-    matches = re.findall(r"'(.*?)'", reponse)
+def clean_responses(response:str):
+    matches = re.findall(r"'(.*?)'", response)
     return ','.join(matches)
 def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str]):
     """
