@@ -81,7 +81,6 @@ def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
     responses = responses.applymap(clean_responses)
     return convert_to_dummies(responses, col_name, splitter=",")
 
-
 def clean_responses(response:str):
     response = str(response)
     matches = re.findall(r"'(.*?)'", response)
@@ -128,8 +127,8 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
 def treat_stage(X_train):
     X_train = change_value(X_train, 'Stage',
                            {"stage0a": 1, "stage0is": 2, "stage0b": 2, "stage1b": 4, "stage1c": 5, "stage1": 3,
-                            "stage2b": 7, "stage2c": 8, "stage2": 6, "stage3b": 10, "stage3c": 11, "stage3": 9,
-                            "stage4": 12})
+                            "stage2b": 10, "stage2c": 11, "stage2": 9, "stage3b": 16, "stage3c": 17, "stage3": 15,
+                            "stage4": 21})
     X_train['Stage'].fillna(0, inplace=True)
     X_train['Stage'] = pd.to_numeric(X_train['Stage'],
                                      errors='coerce').fillna(0).astype(float)
@@ -140,7 +139,6 @@ def treat_pos_nodes(X_train):
     X_train['Positivenodes'].fillna(0, inplace=True)
     X_train['Positivenodes'] = pd.to_numeric(X_train['Positivenodes'],
                                              errors='coerce').fillna(0).astype(float)
-
 
 def treat_Node_Exam(X_train):
     X_train['Nodesexam'].fillna(0, inplace=True)
