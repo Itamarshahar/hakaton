@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 
 from pre_process import run_preprocess, make_unique_response
-from visualization import draw, catagorial_label_perc
+from visualization import draw, catagorial_label_perc, generate_is_sick_vector
 import predicting_tumor_size
 SAMPLE_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
 LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
@@ -28,7 +28,8 @@ if __name__ == '__main__':
     #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
     cols_to_remove = []
     X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM)
-    print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM))
-    catagorial_label_perc(X, y, )
+    #print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM))
+    for col in COLS_TO_DUM:
+        catagorial_label_perc(X, generate_is_sick_vector(y), col)
     draw(X, make_unique_response(y))
 

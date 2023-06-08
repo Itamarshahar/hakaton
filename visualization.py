@@ -26,21 +26,24 @@ def plot_corelation(X, y):
 
     print(val_counts)
 
-def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame,  cancer_site: str, orig_col : str):
+def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame, orig_col: str, cancer_site: str = "sick"):
     probabilities = []
 
     column_names = data.columns
-    stage_columns = [col for col in column_names if orig_col in col.lower()]
+    stage_columns = [col for col in column_names if orig_col in col and data[data[col] == 1].count().any()]
 
-    data = data.append(response)
+    for column in stage_columns:
+        filtered_data = pd.concat((pd.DataFrame(data[column]), response), axis=1)
+        filtered_data = filtered_data[filtered_data[column] == 1]
 
-    for column in column_names:
-        filtered_data = data[data[column] == 1]  # Filter dataframe to include only rows where the value is 1
-        probability = filtered_data[filtered_data[cancer_site] == 1].count() / filtered_data.shape[0] # Calculate the probability
-        probabilities.append(probability)
-    fig = px.bar(x=stage_columns, y=probabilities, labels={'x': 'Columns', 'y': 'Probability of 1'})
+        if filtered_data.shape[0] != 0:
+            probability = filtered_data[filtered_data[cancer_site] == 1].shape[0] / filtered_data.shape[0]
+            probabilities.append(probability)
+
+    df = pd.DataFrame({'Columns': stage_columns, 'Probability of 1': probabilities})
+    fig = px.bar(df, x='Columns', y='Probability of 1', labels={'Columns': 'Columns', 'Probability of 1': 'Probability of 1'})
     fig.update_layout(title='Probability of Having a Value of 1 in Each Column')
-    fig.show()
+    fig.write_image(f"./catagorial_feature_sick_probability/percentage_as_{orig_col}.png")
 
 def feature_evaluation(X: pd.DataFrame, y: pd.Series,
                     output_path: str = ".") -> NoReturn:
