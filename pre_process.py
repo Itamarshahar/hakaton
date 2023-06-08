@@ -34,11 +34,8 @@ def load_data(samples_file_name: str, responses_file_name: str) :
 
 def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: [str], cols_to_dummies: [str]):
 
-
-
     # Initialize CountVectorizer
     vectorizer = CountVectorizer()
-
 
     # Fit and transform the text data
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
@@ -83,12 +80,15 @@ def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
 def clean_responses(reponse:str):
     matches = re.findall(r"'(.*?)'", reponse)
     return ','.join(matches)
-def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str]):
+def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_remove:[str], cols_to_dummies:[str]) ->:
+    """
+    return matrix of only numbers
+    """
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
     make_unique_response(y_train)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
-    pass
+    return X_train_numeric_only
 
