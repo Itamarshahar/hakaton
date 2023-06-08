@@ -1,5 +1,6 @@
 from sklearn.base import BaseEstimator
-class PredictingMetastases:
+
+class PredictingMetastases(BaseEstimator):
     def __int__(self):
         self.logistic_rearners_ = []
 
