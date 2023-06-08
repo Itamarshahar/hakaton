@@ -14,6 +14,7 @@ def draw(X, y) -> None:
         pass
 def generate_is_sick_vector(y):
     is_sick_vector = np.where(y.sum(axis=1) > 0, 1, 0)
+    is_sick_vector = pd.DataFrame(is_sick_vector, columns=['sick'])
     return is_sick_vector
 def plot_corelation(X, y):
     val_counts = {}

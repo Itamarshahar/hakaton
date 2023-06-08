@@ -29,6 +29,6 @@ if __name__ == '__main__':
     cols_to_remove = []
     X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM)
     print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20,COL_TO_REMOVE, COLS_TO_DUM))
-    catagorial_label_perc(X, y, [])
+    catagorial_label_perc(X, y, )
     draw(X, make_unique_response(y))
 
