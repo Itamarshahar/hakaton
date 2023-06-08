@@ -51,7 +51,7 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
 
     for col in cols_to_dummies:
         convert_to_dummies(X_train, col)
-        X_train = X_train.drop(col, axis=1)
+
     return X_train
 
 def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], default_value: any):
@@ -70,7 +70,7 @@ def convert_to_dummies(X_train, col_to_dummies, splitter:str = "+"):
     df = pd.DataFrame()
     for word in unique_words:
         X_train[word] = [int(word in text.lower().split()) for text in X_train[col_to_dummies]]
-    return X_train
+    return X_train.drop(col_to_dummies, axis= 1)
 
 def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
     col_name = responses.columns[0]
@@ -87,7 +87,7 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     """
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
-    make_unique_response(y_train)
+    y = make_unique_response(y_train)
     er_dict = {'pos':99999}
     df = change_value(X_train, 'er', er_dict, 555555)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
