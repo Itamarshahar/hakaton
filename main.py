@@ -4,7 +4,8 @@ from pre_process import run_preprocess, make_unique_response
 from visualization import draw, catagorial_label_perc, generate_is_sick_vector
 import predicting_tumor_size
 from predicting_metastases import PredictingMetastases
-
+import numpy as np
+import scipy.stats as stats
 SAMPLE_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
 LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
 
