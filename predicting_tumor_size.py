@@ -1,5 +1,7 @@
 from sklearn.base import BaseEstimator
-class PredictingMetastases:
+
+
+class PredictTumorSize(BaseEstimator):
     def __int__(self):
         pass
 
