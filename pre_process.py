@@ -37,7 +37,6 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
     # Initialize CountVectorizer
     vectorizer = CountVectorizer()
 
-
     # Fit and transform the text data
     X_train.rename(columns=lambda x: x.replace(' ', ''), inplace=True)
     X_train.rename(columns=lambda x: x.replace("אבחנה-", ''), inplace=True)
