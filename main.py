@@ -17,6 +17,11 @@ LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.l
 SAMPLE_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.feats.csv"
 LABEL_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.0.csv"
 LABEL1_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.1.csv"
+
+SAMPLE_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.feats.csv"
+LABEL_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.labels.0.csv"
+
+
 COLS_TO_DUM = ['FormName','Basicstage', 'Hospital',
                'UserName','Histologicaldiagnosis','N-lymphnodesmark(TNM)',
              'surgerybeforeorafter-Actualactivity']
@@ -73,9 +78,9 @@ if __name__ == '__main__':
     # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # respon.to_excel('./output.xlsx', index=False)
 
-    X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
-    X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
-    y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
+    # X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
+    # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
     X = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
     y = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
 
