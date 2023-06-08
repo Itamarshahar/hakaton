@@ -24,12 +24,11 @@ COLS_TO_DUM = ['FormName','Basicstage', 'Hospital',
 COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3','surgerybeforeorafter-Activitydate',
                  'KI67protein','Surgeryname1', 'Surgeryname2', 'Surgeryname3']
 
-def run_tumor_size(str1, str2, lst1, lst2):
-    hillel_X, hillel_y = run_preprocess(str1, str2, lst1, lst2, mode="tumor_size")
-    h_train_x, h_train_y, h_test_x, h_test_y = train_test_split(hillel_X, hillel_y, test_size=0.2)
+def run_tumor_size(X,y):
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
     learner = predicting_tumor_size.PredictTumorSize()
-    learner._fit(h_train_x, h_train_y)
-    return learner._loss(h_test_x, h_train_y)
+    learner._fit(X_train, y_train)
+    return learner._loss(X_test, y_test)
 
 def run_metastases(X,y):
     X = X.values
@@ -66,13 +65,21 @@ if __name__ == '__main__':
     cols_to_remove = []
 
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv",COL_TO_REMOVE, COLS_TO_DUM)
-    X, y1 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
-    X, y2 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM,"meta")
-
+    # X, y1 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # X, y2 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM,"meta")
+    #
     # run_metastases(X,y)
-    respon=get_column_names_with_ones(run_metastases(X,y2), y2.columns)
-    run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
-    respon.to_excel('./output.xlsx', index=False)
+    # respon=get_column_names_with_ones(run_metastases(X,y2), y2.columns)
+    # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # respon.to_excel('./output.xlsx', index=False)
+
+    # X, y = run_preprocess(SAMPLE_PATH_60, LABEL1_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
+    # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
+    # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
+    X = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
+    y = pd.read_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
+
+    run_tumor_size(X, y)
     # for col in COLS_TO_DUM:
     #     catagorial_label_perc(X, generate_is_sick_vector(y), col)
     # draw(X, make_unique_response(y))
