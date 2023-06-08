@@ -3,27 +3,36 @@ import sklearn
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import cross_val_predict, cross_val_score
 
 
 class PredictingMetastases(BaseEstimator):
-    def __init__(self):
+    def __init__(self) -> None :
         self.logistic_learners_ = []
-        self.random_forest = RandomForestClassifier(class_weight="balanced")
+        self.random_forest = RandomForestClassifier(n_estimators=100, random_state=42, class_weight="balanced")
         self.fitted = False
+        self.n_neighbors = KNeighborsClassifier(2)
 
-    def _fit(self, X, y):
+
+    def _fit(self, X, y) -> None:
+        self.predicted_labels = cross_val_score(self.random_forest, X, y, cv=5)
         self.random_forest.fit(X, y)
+        self.n_neighbors.fit(X, y)
         self.fitted = True
 
-    def _predict(self, X):
+    def _predict(self, X) :
         if not self.fitted:
             print("Must Fit First!")
             return
-        self.random_forest.predict(X)
+        return self.random_forest.predict(X)
+        # return self.n_neighbors.predict(X)
 
     def _loss(self, X, true_y):
         y_pred = self._predict(X)
-        return f1_score(true_y, y_pred)
+        print("1 in y_pred:", np.sum(y_pred),"\n", "1 in y_true:", np.sum(true_y))
+        print("2:", np.sum(y_pred * true_y))
+        return f1_score(true_y, y_pred, average="micro"),f1_score(true_y, y_pred,  average="macro")
         # res = sklearn.metrics.accuracy_score(true_y, prediction)
         # print("res is: " + str(res))
         # print("zeros MSE is: " + str(zeros))
