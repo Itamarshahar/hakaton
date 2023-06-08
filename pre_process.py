@@ -98,14 +98,21 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
         X_train[col].fillna(X_train[col].mean())
     X_train = change_value(X_train,'Histopatologicaldegree',{"null":-1, "gx":0, "g1":1,"g2":2, "g3":3, "g4":4 }, default_value= 0)
     X_train = treat_IVI(X_train)
+    X_train = trea_M_meta(X_train)
     #X_train['Histopatologicaldegree'].replace("Null", -1, inplace= True)
-    er_dict = {'pos':99999}
-    df = change_value(X_train, 'er', er_dict, 555555)
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
 
     return X_train_numeric_only, y_train
+
+
+def trea_M_meta(X_train):
+    X_train = change_value(X_train, 'M-metastasesmark(TNM)', {"m0": 1, "m1a": 3, "m1b": 4, "m1": 2, "mx": 5},
+                           default_value=0)
+    X_train['M-metastasesmark(TNM)'] = pd.to_numeric(X_train['M-metastasesmark(TNM)'],
+                                                     errors='coerce').fillna(0).astype(int)
+    return X_train
 
 
 def treat_IVI(X_train):
