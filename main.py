@@ -12,5 +12,5 @@ if __name__ == '__main__':
     cols_to_remove = []
     run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage'])
     X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage'])
-    draw(X, make_unique_response(y))
+    draw(X, y)
 
