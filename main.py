@@ -19,7 +19,7 @@ COLS_TO_DUM = ['FormName','Basicstage', 'Hospital',
 COL_TO_REMOVE = ['Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Surgerydate3','surgerybeforeorafter-Activitydate']
 
 
-def testing_tumor_size(str1, str2, lst1, lst2):
+def simple_testing_tumor_size(str1, str2, lst1, lst2):
     hillel_X, hillel_y = run_preprocess(str1, str2, lst1, lst2, mode="tumor_size")
     h_train_x, h_test_x, h_train_y, h_test_y = train_test_split(hillel_X, hillel_y, test_size=0.2)
     # h_train_x, h_train_y, h_test_x, h_test_y = train_test_split(hillel_X, hillel_y, test_size=0.2)
@@ -28,7 +28,7 @@ def testing_tumor_size(str1, str2, lst1, lst2):
     res = learner._loss(h_test_x, h_test_y)
     # zeros = sklearn.metrics.mean_squared_error(h_test_x, np.zeros(h_test_x.shape[0]))
     print(res)
-    print(zeros)
+    # print(zeros)
     return res
 
 if __name__ == '__main__':
