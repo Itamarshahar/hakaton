@@ -56,7 +56,7 @@ def prepreprocess(X_train: pd.DataFrame, y_train: pd.DataFrame, cols_to_remove: 
 def change_value(df : pd.DataFrame, col_name:str , convert_dict: dict[str,int], default_value: any= 0):
     look_for_key = convert_dict.keys()
     look_for_value = convert_dict.values()
-    col = df.applymap(lambda x:x.lower() if isinstance(x, str) else x)[col_name]
+    col = df.applymap(lambda x: x.lower() if isinstance(x, str) else x)[col_name]
     #col.fillna(default_value)
     #col = col.replace({val: convert_dict.get(val, default_value) for val in col.unique()})
     for key in look_for_key:
@@ -73,7 +73,8 @@ def convert_to_dummies(df, col_to_dummies, splitter:str = "+"):
         if words[0] != '':
             unique_words.update(words)
     for word in unique_words:
-        df[col_to_dummies + " " + word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
+        # df[col_to_dummies + " " + word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
+        df[word] = [int(word in text.lower().split()) for text in df[col_to_dummies]]
     return df.drop(col_to_dummies, axis= 1)
 
 def make_unique_response(responses: pd.DataFrame) -> pd.DataFrame:
@@ -117,6 +118,12 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train['er'] = pd.to_numeric(X_train['er'],
                                   errors='coerce').fillna(0).astype(float)
 
+    X_train['T-Tumormark4'] = np.where(X_train['T-Tumormark(TNM)'].str.contains('T4'), X_train['T-Tumormark(TNM)'], 0)
+    X_train['T-Tumormark4'].fillna(0)
+    X_train = change_value(X_train, 'T-Tumormark(TNM)',
+                           {"Tx": 0, "T0": 0, "T1": 1, "T2": 2, "T3": 3, "T4": 4})
+    X_train = convert_to_dummies(X_train, 'T-Tumormark4')
+
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
@@ -155,7 +162,7 @@ def treat_Margin_Type(X_train):
 
 
 def trea_M_meta(X_train):
-    X_train = change_value(X_train, 'M-metastasesmark(TNM)', {"m0": 0, "m1a": 3, "m1b": 3, "m1": 3, "mx": 1},
+    X_train = change_value(X_train, 'M-metastasesmark(TNM)', {"m0": 0, "m1a": 1, "m1b": 1, "m1": 1, "mx": 0},
                            default_value=0)
     X_train['M-metastasesmark(TNM)'] = pd.to_numeric(X_train['M-metastasesmark(TNM)'],
                                                      errors='coerce').fillna(0).astype(int)
