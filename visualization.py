@@ -13,9 +13,21 @@ def draw(X, y) -> None:
     for col in X.columns:
         pass
 
-def catagorial_label_perc_():
+def catagorial_label_perc(data: pd.DataFrame, response: pd.DataFrame,  cancer_site: str, orig_col : str):
+    probabilities = []
 
+    column_names = data.columns
+    stage_columns = [col for col in column_names if orig_col in col.lower()]
 
+    data = data.append(response)
+
+    for column in column_names:
+        filtered_data = data[data[column] == 1]  # Filter dataframe to include only rows where the value is 1
+        probability = filtered_data[filtered_data[cancer_site] == 1].count() / filtered_data.shape[0] # Calculate the probability
+        probabilities.append(probability)
+    fig = px.bar(x=stage_columns, y=probabilities, labels={'x': 'Columns', 'y': 'Probability of 1'})
+    fig.update_layout(title='Probability of Having a Value of 1 in Each Column')
+    fig.show()
 
 def feature_evaluation(X: pd.DataFrame, y: pd.Series,
                     output_path: str = ".") -> NoReturn:
