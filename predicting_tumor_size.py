@@ -25,4 +25,4 @@ class PredictTumorSize(BaseEstimator):
         y_pred = self._predict(X)
         print("mean_sq_err:", mean_squared_error(y_true=true_y, y_pred=y_pred))
         # print(np.sum(y_pred*true_y))
-        return mean_squared_error(y_true=true_y, y_pred=y_pred*0)
+        return mean_squared_error(y_true=true_y, y_pred=y_pred)
