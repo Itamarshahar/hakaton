@@ -145,7 +145,7 @@ def treat_Node_Exam(X_train):
     X_train['Nodesexam'] = pd.to_numeric(X_train['Nodesexam'],
                                          errors='coerce').fillna(0).astype(float)
 
-
+ƒ
 def treat_Margin_Type(X_train):
     X_train = change_value(X_train, 'MarginType', {"נקיים": -1, "נגועים": 1, "ללא": 0},
                            default_value=0)
