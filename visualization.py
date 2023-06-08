@@ -10,19 +10,20 @@ def draw(X, y) -> None:
     """
 
     """
-    print(X)
-    print(y)
-    # feature_evaluation(X,y)
-
-    unique_labels = y[y.columns[0]].unique()
-    for feature in X.columns:
-        unique_feature = X[feature].unique()
-        d = {str(num): sum(y[y.columns[0]==num]) for num in unique_feature}
-        df = pd.DataFrame(d, index=unique_labels)
-        ax = df.plot.bar(rot=0)
-        ax.tick_params(axis='x', rotation=90, labelsize=5)
-        ax.set_title(feature)  # Set feature name as the title
-        plt.show()
+    plot_corelation(X,y)
+    # print(X)
+    # print(y)
+    # # feature_evaluation(X,y)
+    #
+    # unique_labels = y[y.columns[0]].unique()
+    # for feature in X.columns:
+    #     unique_feature = X[feature].unique()
+    #     d = {str(num): sum(y[y.columns[0]==num]) for num in unique_feature}
+    #     df = pd.DataFrame(d, index=unique_labels)
+    #     ax = df.plot.bar(rot=0)
+    #     ax.tick_params(axis='x', rotation=90, labelsize=5)
+    #     ax.set_title(feature)  # Set feature name as the title
+    #     plt.show()
 """
 >>> speed = [0.1, 17.5, 40, 48, 52, 69, 88]
 >>> lifespan = [2, 8, 70, 1.5, 25, 12, 28]
@@ -32,6 +33,18 @@ def draw(X, y) -> None:
 ...                    'lifespan': lifespan}, index=index)
 >>> ax = df.plot.bar(rot=0)"""
 
+def generate_is_sick_vector(y):
+    is_sick_vector = np.where(y.sum(axis=1) > 0, 1, 0)
+    return is_sick_vector
+def plot_corelation(X, y):
+    val_counts = {}
+    is_sick = generate_is_sick_vector(y)
+    X["is_sick"] = is_sick # Filter X based on is_sick
+    for val in X['Nodesexam'].unique():
+        count = ((X['Nodesexam'] == val) & (is_sick == 1)).sum()
+        val_counts[val] = count
+
+    print(val_counts)
 
 
 def feature_evaluation(X: pd.DataFrame, y: pd.Series,

@@ -20,12 +20,12 @@ def testing_tumor_size(str1, str2, lst1, lst2):
     return res
 
 if __name__ == '__main__':
+
     np.random.seed(0)
     cols_to_remove = []
     #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
     cols_to_remove = []
     run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage', 'Hospital'])
     X, y = run_preprocess(SAMPLE_PATH_20, LABEL_PATH_20,['Age'], ["Surgeryname1",'FormName','Basicstage'])
-    print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20_TUMOR_SIZE,['Age'], ["Surgeryname1",'FormName','Basicstage']))
+    # print(testing_tumor_size(SAMPLE_PATH_20, LABEL_PATH_20_TUMOR_SIZE,['Age'], ["Surgeryname1",'FormName','Basicstage']))
     draw(X, make_unique_response(y))
-
