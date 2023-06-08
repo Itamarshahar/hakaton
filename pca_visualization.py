@@ -22,9 +22,9 @@ def plot_hyperplane(clf, min_x, max_x, linestyle, label):
 
 def plot_subfigure(X, Y, subplot, title, transform):
     if transform == "pca":
-        X = PCA(n_components=6).fit_transform(X)
+        X = PCA(n_components=3).fit_transform(X)
     elif transform == "cca":
-        X = CCA(n_components=6).fit(X, Y).transform(X)
+        X = CCA(n_components=3).fit(X, Y).transform(X)
     else:
         raise ValueError
 
@@ -39,40 +39,40 @@ def plot_subfigure(X, Y, subplot, title, transform):
 
     plt.subplot(2, 2, subplot)
     plt.title(title)
+    colors =['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+    for i in range(3):
+        zero_class = np.where(Y[:, i])
+        # one_class = np.where(Y[:, 1])
+        plt.scatter(X[:, 0], X[:, 1], s=40, c="gray", edgecolors=(0, 0, 0))
+        plt.scatter(
+            X[zero_class, 0],
+            X[zero_class, 2],
+            s=i*10,
+            edgecolors=colors[i],
+            facecolors="none",
+            linewidths=2,
+            label=f"Class {i}",
+        )
+        # plt.scatter(
+        #     X[one_class, 0],
+        #     X[one_class, 1],
+        #     s=80,
+        #     edgecolors="orange",
+        #     facecolors="none",
+        #     linewidths=2,
+        #     label="Class 2",
+        # )
+        plot_hyperplane(
+            classif.estimators_[i], min_x, max_x, "k--", f"Boundary\nfor class {i}"
+        )
+        # plot_hyperplane(
+        #     classif.estimators_[1], min_x, max_x, "k-.", "Boundary\nfor class 2"
+        # )
+        plt.xticks(())
+        plt.yticks(())
 
-    zero_class = np.where(Y[:, 0])
-    one_class = np.where(Y[:, 1])
-    plt.scatter(X[:, 0], X[:, 1], s=40, c="gray", edgecolors=(0, 0, 0))
-    plt.scatter(
-        X[zero_class, 0],
-        X[zero_class, 1],
-        s=160,
-        edgecolors="b",
-        facecolors="none",
-        linewidths=2,
-        label="Class 1",
-    )
-    plt.scatter(
-        X[one_class, 0],
-        X[one_class, 1],
-        s=80,
-        edgecolors="orange",
-        facecolors="none",
-        linewidths=2,
-        label="Class 2",
-    )
-
-    plot_hyperplane(
-        classif.estimators_[0], min_x, max_x, "k--", "Boundary\nfor class 1"
-    )
-    plot_hyperplane(
-        classif.estimators_[1], min_x, max_x, "k-.", "Boundary\nfor class 2"
-    )
-    plt.xticks(())
-    plt.yticks(())
-
-    plt.xlim(min_x - 0.5 * max_x, max_x + 0.5 * max_x)
-    plt.ylim(min_y - 0.5 * max_y, max_y + 0.5 * max_y)
+        plt.xlim(min_x - 0.5 * max_x, max_x + 0.5 * max_x)
+        plt.ylim(min_y - 0.5 * max_y, max_y + 0.5 * max_y)
     if subplot == 2:
         plt.xlabel("First principal component")
         plt.ylabel("Second principal component")
@@ -86,6 +86,7 @@ def run_pca_visualisation(X,Y):
     # X, Y = make_multilabel_classification(
     #     n_classes=6, n_labels=1, allow_unlabeled=True, random_state=1
     # )
+    Y = Y[:, ~np.all(Y == 0, axis=0)]
     plot_subfigure(X, Y, 1, "With unlabeled samples + CCA", "cca")
     plot_subfigure(X, Y, 2, "With unlabeled samples + PCA", "pca")
 
