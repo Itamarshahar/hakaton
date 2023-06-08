@@ -10,7 +10,7 @@ from sklearn.model_selection import cross_val_predict, cross_val_score
 class PredictingMetastases(BaseEstimator):
     def __init__(self) -> None :
         self.logistic_learners_ = []
-        self.random_forest = RandomForestClassifier(n_estimators=200, random_state=42, class_weight="balanced")
+        self.random_forest = RandomForestClassifier(n_estimators=100, random_state=42, class_weight="balanced")
         self.fitted = False
         # self.n_neighbors = KNeighborsClassifier(8)
 
