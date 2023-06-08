@@ -79,5 +79,8 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     X_train, X_test, y_train, y_test = load_data(samples_file_name, responses_file_name)
     X_train = prepreprocess(X_train, y_train, cols_to_remove, cols_to_dummies)
     make_unique_response(y_train)
-    X_train.columns
+    non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
+    X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
+    X_train_numeric_only.fillna(0, inplace=True)
     pass
+
