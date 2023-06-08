@@ -82,5 +82,5 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
     non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
     X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
     X_train_numeric_only.fillna(0, inplace=True)
-    pass
+    return X_train_numeric_only
 
