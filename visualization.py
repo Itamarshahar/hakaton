@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+
 from pre_process import prepreprocess, run_preprocess
 import numpy as np
 import plotly.express as px
