@@ -28,7 +28,6 @@ class PredictingMetastases(BaseEstimator):
             return
         return self.random_forest.predict(X)
         # return self.n_neighbors.predict(X)
-
     def _loss(self, X, true_y):
         y_pred = self._predict(X)
         print("1 in y_pred:", np.sum(y_pred))
