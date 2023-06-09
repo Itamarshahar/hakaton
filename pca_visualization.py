@@ -9,7 +9,16 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import SVC
 from sklearn.decomposition import PCA
 from sklearn.cross_decomposition import CCA
-
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import numpy as np
+from pre_process import run_preprocess, make_unique_response, run_preocces_only_X
+from visualization import draw, catagorial_label_perc, generate_is_sick_vector
+import predicting_tumor_size
+from predicting_metastases import PredictingMetastases
+import numpy as np
+import post_process
+import scipy.stats as stats
 
 def plot_hyperplane(clf, min_x, max_x, linestyle, label):
     # get the separating hyperplane
@@ -86,7 +95,8 @@ def run_pca_visualisation(X,Y):
     # X, Y = make_multilabel_classification(
     #     n_classes=6, n_labels=1, allow_unlabeled=True, random_state=1
     # )
-    Y = Y[:, ~np.all(Y == 0, axis=0)]
+
+    # Y = Y[:, ~np.all(Y == 0, axis=0)]
     plot_subfigure(X, Y, 1, "With unlabeled samples + CCA", "cca")
     plot_subfigure(X, Y, 2, "With unlabeled samples + PCA", "pca")
 
@@ -100,3 +110,36 @@ def run_pca_visualisation(X,Y):
     plt.subplots_adjust(0.04, 0.02, 0.97, 0.94, 0.09, 0.2)
     plt.show()
 
+
+
+def run_metastases(X,y):
+    X = X.values
+    y = y.values
+    # train_x, test_x,train_y, test_y = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
+    # run_model_selection(X_train, X_test, y_train, y_test)
+
+    metastases_model = PredictingMetastases()
+    metastases_model._fit(X_train, y_train)
+    loss = metastases_model._loss(X_test, y_test)
+    print(loss)
+    return y
+
+
+if __name__ == '__main__':
+    np.random.seed(0)
+
+    COLS_TO_DUM = ['FormName', 'Basicstage', 'Hospital'
+        , 'Histologicaldiagnosis', 'N-lymphnodesmark(TNM)',
+                   'surgerybeforeorafter-Actualactivity']
+
+    COL_TO_REMOVE = ['UserName', 'Diagnosisdate', 'Surgerydate1',
+                     'Surgerydate2', 'Surgerydate3',
+                     'surgerybeforeorafter-Activitydate',
+                     'KI67protein', 'Surgeryname1', 'Surgeryname2',
+                     'Surgeryname3']
+    link1 = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv"
+    link2 = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv"
+    X, y = run_preprocess(link1,link2, COL_TO_REMOVE, COLS_TO_DUM, "meta")
+
+    run_pca_visualisation(X,y)

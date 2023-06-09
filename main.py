@@ -111,7 +111,7 @@ def submit_tumor():
     predictions = model_tumor._predict(X_test)
     df_predictions = pd.DataFrame(predictions,
                                   columns=['אבחנה-Tumor size'])
-    df_predictions.to_csv("part2/predictions.csv", index=False)
+    df_predictions.to_csv("predictions.csv", index=False)
 
 
 if __name__ == '__main__':
