@@ -10,19 +10,7 @@ import post_process
 import scipy.stats as stats
 
 from predicting_tumor_size import PredictTumorSize
-SAMPLE_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
-LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
 
-SAMPLE_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.feats.csv"
-LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.labels.0.csv"
-
-
-SAMPLE_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.feats.csv"
-LABEL_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.0.csv"
-LABEL1_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.1.csv"
-
-SAMPLE_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.feats.csv"
-LABEL_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.labels.0.csv"
 
 
 COLS_TO_DUM = ['FormName','Basicstage', 'Hospital'
@@ -45,10 +33,7 @@ def run_tumor_size(X,y):
 def run_metastases(X,y):
     X = X.values
     y = y.values
-    # train_x, test_x,train_y, test_y = train_test_split(X, y, test_size=0.2)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
-    # run_model_selection(X_train, X_test, y_train, y_test)
-
     metastases_model = PredictingMetastases()
     metastases_model._fit(X_train, y_train)
     loss = metastases_model._loss(X_test, y_test)
@@ -69,8 +54,6 @@ def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
 def generate_submition_file():
     submit_tumor()
 
-    # print(tmp)
-    # return model_tumor._loss(X_test, y_test)
 
 
     # X, y = run_preprocess(link_to_all_data, link_to_all_labels1,COL_TO_REMOVE, COLS_TO_DUM)
