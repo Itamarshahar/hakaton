@@ -1,7 +1,8 @@
 import pandas as pd
+import sklearn
 from sklearn.model_selection import train_test_split
 import numpy as np
-from pre_process import run_preprocess, make_unique_response, run_preocces_only_X
+from pre_process import run_preprocess, make_unique_response, run_preocces_only_X,run_preprocess_for_meta
 from visualization import draw, catagorial_label_perc, generate_is_sick_vector
 import predicting_tumor_size
 from predicting_metastases import PredictingMetastases
@@ -10,7 +11,22 @@ import post_process
 import scipy.stats as stats
 
 from predicting_tumor_size import PredictTumorSize
+SAMPLE_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
+LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
 
+SAMPLE_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.feats.csv"
+LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.labels.0.csv"
+
+
+SAMPLE_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.feats.csv"
+LABEL_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.0.csv"
+LABEL1_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.1.csv"
+
+SAMPLE_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.feats.csv"
+LABEL_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.labels.0.csv"
+
+ALL_DATA_SAMPLE = "./Data/original_data_DONT_TUOCH!!!/train.feats.csv"
+LABEL_PATH_ALL = "./Data/original_data_DONT_TUOCH!!!/train.labels.0.csv"
 
 
 COLS_TO_DUM = ['FormName','Basicstage', 'Hospital'
@@ -22,7 +38,7 @@ COL_TO_REMOVE = ['UserName', 'Diagnosisdate', 'Surgerydate1', 'Surgerydate2','Su
 
 def run_tumor_size(X,y):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    learner = PredictTumorSize()
+    learner = predicting_tumor_size.PredictTumorSize()
     learner._fit(X_train, y_train)
     predictions = learner._predict(X_test)
     df_predictions = pd.DataFrame(predictions, columns=['אבחנה-Tumor size'])
@@ -30,11 +46,14 @@ def run_tumor_size(X,y):
     # print(tmp)
     return learner._loss(X_test, y_test)
 
-def run_metastases(X,y):
-    X = X.values
-    y = y.values
+def run_metastases(X,y, le: sklearn.preprocessing.LabelEncoder):
+    # X = X.values
+    # y = y.values
+    # train_x, test_x,train_y, test_y = train_test_split(X, y, test_size=0.2)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
-    metastases_model = PredictingMetastases()
+    # run_model_selection(X_train, X_test, y_train, y_test)
+
+    metastases_model = PredictingMetastases(le)
     metastases_model._fit(X_train, y_train)
     loss = metastases_model._loss(X_test, y_test)
     print(loss)
@@ -52,22 +71,35 @@ def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
 
 
 def generate_submition_file():
-    submit_tumor()
+    # submit_tumor()
+    submit_meta()
 
+    # print(tmp)
+    # return model_tumor._loss(X_test, y_test)
 
 
     # X, y = run_preprocess(link_to_all_data, link_to_all_labels1,COL_TO_REMOVE, COLS_TO_DUM)
 def submit_meta():
-    link_to_all_data = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv"
-    link_to_all_labels1 = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv"
-    link_to_test_data = "/Users/itamar_shahar/PycharmProjects/hakaton/test.feats.csv"
+    link_to_all_data = ALL_DATA_SAMPLE
+    link_to_all_labels1 = LABEL_PATH_ALL
+    link_to_test_data = "./Data/DATA_by_percent_THIS_IS_GOOD/test.feats.csv"
     ############################################################################
-    # X = pd.read_csv(link_to_all_data)
-    # y = pd.read_csv(link_to_all_labels1)
-    # X_test = pd.read_csv(link_to_test_data)
+    X = pd.read_csv(link_to_all_data)
+    y = pd.read_csv(link_to_all_labels1)
+    y_garbage = pd.read_csv(link_to_all_labels1)
+    X_test = pd.read_csv(link_to_test_data)
     ###########################################################################
-    # X_train = run_preocces_only_X(X, y, COL_TO_REMOVE,COLS_TO_DUM)
-    # X_test = run_preocces_only_X(X_test, y, COL_TO_REMOVE, COLS_TO_DUM)
+    le = sklearn.preprocessing.LabelEncoder()
+    X_train, y = run_preprocess_for_meta(X, y, COL_TO_REMOVE,COLS_TO_DUM, le)
+    X_test,p = run_preprocess_for_meta(X_test, y_garbage, COL_TO_REMOVE, COLS_TO_DUM, le)
+    X_test = X_test.reindex(columns=X_train.columns, fill_value=0)
+    metastases_model = PredictingMetastases(le)
+    metastases_model._fit(X_train, y)
+    res = metastases_model._predict(X_test)
+    res = le.inverse_transform(res)
+    res_df = pd.DataFrame(res, columns=['אבחנה-Location of distal metastases'])
+    res_df.to_csv("part0/predictions.csv", index=False)
+    # print("part 0 - BSD!!!")
     # model_tumor = PredictTumorSize()
     # model_tumor._fit(X_train, y)
     # X_test = X_test.reindex(columns=X_train, fill_value=0)
@@ -81,6 +113,7 @@ def submit_tumor():
     link_to_all_data = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv"
     link_to_all_labels1 = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.1.csv"
     link_to_test_data = "/Users/itamar_shahar/PycharmProjects/hakaton/test.feats.csv"
+
     ############################################################################
     X = pd.read_csv(link_to_all_data)
     y = pd.read_csv(link_to_all_labels1)
@@ -94,23 +127,48 @@ def submit_tumor():
     predictions = model_tumor._predict(X_test)
     df_predictions = pd.DataFrame(predictions,
                                   columns=['אבחנה-Tumor size'])
-    df_predictions.to_csv("predictions.csv", index=False)
+    df_predictions.to_csv("part1/predictions.csv", index=False)
 
 
 if __name__ == '__main__':
     generate_submition_file()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #run_preprocess("./train.feats.csv", "./train.labels.0.csv", cols_to_remove)
 
-
+    # cols_to_remove = []
+    # le = sklearn.preprocessing.LabelEncoder()
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.0.csv",COL_TO_REMOVE, COLS_TO_DUM)
     # X, y1 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # X, y2 = run_preprocess(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM,"meta")
     #
-    # run_metastases(X,y)
+    # run_metastases(X,y2, le)
     # respon=get_column_names_with_ones(run_metastases(X,y2), y2.columns)
     # run_tumor_size(SAMPLE_PATH_60, LABEL_PATH_60,COL_TO_REMOVE, COLS_TO_DUM)
     # respon.to_excel('./output.xlsx', index=False)
 
+    # X, y = run_preprocess(ALL_DATA_SAMPLE,  LABEL_PATH_ALL, COL_TO_REMOVE, COLS_TO_DUM, "meta", le)
+    # res = run_metastases(X, y, le)
+    # res = pd.Series(le.inverse_transform(res))
     # X, y = run_preprocess("/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv", "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.1.csv",COL_TO_REMOVE, COLS_TO_DUM)
     # X.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/X.csv")
     # y.to_csv("/Users/itamar_shahar/PycharmProjects/hakaton/y.csv")
