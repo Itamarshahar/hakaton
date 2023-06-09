@@ -1,3 +1,5 @@
+import sys
+
 import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
@@ -11,22 +13,10 @@ import post_process
 import scipy.stats as stats
 
 from predicting_tumor_size import PredictTumorSize
-SAMPLE_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.feats.csv"
-LABEL_PATH_10 = "./Data/DATA_by_percent_THIS_IS_GOOD/10_percent_train/10_train.labels.0.csv"
-
-SAMPLE_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.feats.csv"
-LABEL_PATH_20 = "./Data/DATA_by_percent_THIS_IS_GOOD/20_percent_train/20_train.labels.0.csv"
 
 
-SAMPLE_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.feats.csv"
-LABEL_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.0.csv"
-LABEL1_PATH_60 = "./Data/DATA_by_percent_THIS_IS_GOOD/60_percent_train/60_train.labels.1.csv"
-
-SAMPLE_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.feats.csv"
-LABEL_PATH_80 = "./Data/DATA_by_percent_THIS_IS_GOOD/80_percent_train/80_train.labels.0.csv"
-
-ALL_DATA_SAMPLE = "./Data/original_data_DONT_TUOCH!!!/train.feats.csv"
-LABEL_PATH_ALL = "./Data/original_data_DONT_TUOCH!!!/train.labels.0.csv"
+ALL_DATA_SAMPLE = "./train.feats.csv"
+LABEL_PATH_ALL = "./train.labels.0.csv"
 
 
 COLS_TO_DUM = ['FormName','Basicstage', 'Hospital'
@@ -48,7 +38,6 @@ def run_tumor_size(X,y):
 
 def run_metastases(X,y, le: sklearn.preprocessing.LabelEncoder):
     # X = X.values
-    # y = y.values
     # train_x, test_x,train_y, test_y = train_test_split(X, y, test_size=0.2)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state=42)
     # run_model_selection(X_train, X_test, y_train, y_test)
@@ -69,16 +58,10 @@ def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
         result.append(row_res)
     return pd.DataFrame(result)
 
-
 def generate_submition_file():
-    # submit_tumor()
+    submit_tumor()
     submit_meta()
 
-    # print(tmp)
-    # return model_tumor._loss(X_test, y_test)
-
-
-    # X, y = run_preprocess(link_to_all_data, link_to_all_labels1,COL_TO_REMOVE, COLS_TO_DUM)
 def submit_meta():
     link_to_all_data = ALL_DATA_SAMPLE
     link_to_all_labels1 = LABEL_PATH_ALL
@@ -99,14 +82,6 @@ def submit_meta():
     res = le.inverse_transform(res)
     res_df = pd.DataFrame(res, columns=['אבחנה-Location of distal metastases'])
     res_df.to_csv("part0/predictions.csv", index=False)
-    # print("part 0 - BSD!!!")
-    # model_tumor = PredictTumorSize()
-    # model_tumor._fit(X_train, y)
-    # X_test = X_test.reindex(columns=X_train, fill_value=0)
-    # predictions = model_tumor._predict(X_test)
-    # df_predictions = pd.DataFrame(predictions,
-    #                               columns=['אבחנה-Tumor size'])
-    # df_predictions.to_csv("part2/predictions.csv", index=False)
 
 
 def submit_tumor():
@@ -129,10 +104,21 @@ def submit_tumor():
                                   columns=['אבחנה-Tumor size'])
     df_predictions.to_csv("part1/predictions.csv", index=False)
 
-
-if __name__ == '__main__':
+def main():
+    arg = sys.args
+    if len(arg) != 6:
+        print(
+            "Usage: please provide 4 args: 1.path_to_sample_data 2. "
+            "path_to_response_data 3.path_to_test_data 4.mode(0 for "
+            "meatstases or 1 for tumor size) 5.path_to_output")
+        return 1
+    global ALL_DATA_SAMPLE
+    ALL_DATA_SAMPLE = arg[1]
     generate_submition_file()
 
+
+if __name__ == '__main__':
+    main()
 
 
 
