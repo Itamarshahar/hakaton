@@ -193,6 +193,50 @@ def run_preprocess(samples_file_name: str, responses_file_name: str, cols_to_rem
 
     return X_train_numeric_only, y_train
 
+def run_preprocess_for_meta(X, y, cols_to_remove: [str], cols_to_dummies: [str],
+                   le: sklearn.preprocessing.LabelEncoder = None):
+    """
+    return matrix of only numbers
+    """
+    X_train = prepreprocess(X, y, cols_to_remove, cols_to_dummies)
+    # if mode == 'meta':
+    y_train = make_unique_response(y, le)
+    for col in convert_to_mean:
+        X_train[col].fillna(X_train[col].mean())
+    X_train = change_value(X_train, 'Histopatologicaldegree', {"null": -1, "gx": 0, "g1": 1, "g2": 2, "g3": 3, "g4": 4},
+                           default_value=0)
+    X_train = treat_IVI(X_train)
+    X_train = trea_M_meta(X_train)
+    X_train = treat_Margin_Type(X_train)
+    treat_Node_Exam(X_train)
+    treat_pos_nodes(X_train)
+    # X_train['Side'] = np.where(X_train['Side'] == "דו צדדי", "ימין+שמאל", X_train['Side'])
+    # X_train.fillna()
+    # X_train = convert_to_dummies(X_train,'Side')
+    X_train = treat_stage(X_train)
+
+    X_train = change_value(X_train, 'pr', {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1, "%":1},
+                           default_value=0)
+    X_train['pr'].fillna(0, inplace=True)
+    X_train['pr'] = pd.to_numeric(X_train['pr'],
+                                  errors='coerce').fillna(0).astype(float)
+    X_train = change_value(X_train, 'pr', {"חיובי": 1, "שלילי": -1, "pos": 1, "neg": -1, "%": 1},
+                           default_value=0)
+    X_train['er'].fillna(0, inplace=True)
+    X_train['er'] = pd.to_numeric(X_train['er'],
+                                  errors='coerce').fillna(0).astype(float)
+
+    X_train['T-Tumormark4'] = np.where(X_train['T-Tumormark(TNM)'].str.contains('T4'), X_train['T-Tumormark(TNM)'], 0)
+    X_train['T-Tumormark4'].fillna(0)
+    X_train = change_value(X_train, 'T-Tumormark(TNM)',
+                           {"Tx": 0, "T0": 0, "T1": 1, "T2": 2, "T3": 3, "T4": 4})
+    X_train = convert_to_dummies(X_train, 'T-Tumormark4')
+
+    non_numeric_cols = X_train.select_dtypes(exclude=[np.number]).columns
+    X_train_numeric_only = X_train.drop(non_numeric_cols, axis=1)
+    X_train_numeric_only.fillna(0, inplace=True)
+
+    return X_train_numeric_only, y_train
 
 def treat_stage(X_train):
     X_train = change_value(X_train, 'Stage',
@@ -218,7 +262,7 @@ def treat_Node_Exam(X_train):
 
 
 def treat_Margin_Type(X_train):
-    X_train = change_value(X_train, 'MarginType', {"נקיים": -1, "נגועים": 1, "ללא": 0},
+    X_train = change_value(X_train, 'MarginType', {"נקיים": 0, "נגועים": 1, "ללא": 0},
                            default_value=0)
     X_train['MarginType'] = pd.to_numeric(X_train['MarginType'],
                                           errors='coerce').fillna(0).astype(int)
