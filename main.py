@@ -58,14 +58,17 @@ def get_column_names_with_ones(y: np.ndarray, col_names: [str]):
         result.append(row_res)
     return pd.DataFrame(result)
 
-def generate_submition_file():
-    submit_tumor()
-    submit_meta()
+def generate_submition_file(arg):
+    if arg[4] == "meta":
+        submit_meta(arg)
+    else:
+        submit_tumor(arg)
 
-def submit_meta():
-    link_to_all_data = ALL_DATA_SAMPLE
-    link_to_all_labels1 = LABEL_PATH_ALL
-    link_to_test_data = "./Data/DATA_by_percent_THIS_IS_GOOD/test.feats.csv"
+
+def submit_meta(arg):
+    link_to_all_data = arg[1]
+    link_to_all_labels1 = arg[2]
+    link_to_test_data = arg[3]
     ############################################################################
     X = pd.read_csv(link_to_all_data)
     y = pd.read_csv(link_to_all_labels1)
@@ -81,13 +84,13 @@ def submit_meta():
     res = metastases_model._predict(X_test)
     res = le.inverse_transform(res)
     res_df = pd.DataFrame(res, columns=['אבחנה-Location of distal metastases'])
-    res_df.to_csv("part0/predictions.csv", index=False)
+    res_df.to_csv(arg[5], index=False)
 
 
-def submit_tumor():
-    link_to_all_data = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.feats.csv"
-    link_to_all_labels1 = "/Users/itamar_shahar/PycharmProjects/hakaton/Data/original_data_DONT_TUOCH!!!/train.labels.1.csv"
-    link_to_test_data = "/Users/itamar_shahar/PycharmProjects/hakaton/test.feats.csv"
+def submit_tumor(arg):
+    link_to_all_data = arg[1]
+    link_to_all_labels1 = arg[2]
+    link_to_test_data = arg[3]
 
     ############################################################################
     X = pd.read_csv(link_to_all_data)
@@ -102,7 +105,7 @@ def submit_tumor():
     predictions = model_tumor._predict(X_test)
     df_predictions = pd.DataFrame(predictions,
                                   columns=['אבחנה-Tumor size'])
-    df_predictions.to_csv("part1/predictions.csv", index=False)
+    df_predictions.to_csv(arg[5], index=False)
 
 def main():
     arg = sys.args
@@ -110,11 +113,9 @@ def main():
         print(
             "Usage: please provide 4 args: 1.path_to_sample_data 2. "
             "path_to_response_data 3.path_to_test_data 4.mode(0 for "
-            "meatstases or 1 for tumor size) 5.path_to_output")
+            "metastases or 1 for tumor size) 5.path_to_output")
         return 1
-    global ALL_DATA_SAMPLE
-    ALL_DATA_SAMPLE = arg[1]
-    generate_submition_file()
+    generate_submition_file(arg)
 
 
 if __name__ == '__main__':
